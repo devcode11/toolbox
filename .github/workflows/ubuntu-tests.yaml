@@ -20,9 +20,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '0 0 * * *'
-
 jobs:
   ubuntu-jammy-tests:
     runs-on: ubuntu-22.04
