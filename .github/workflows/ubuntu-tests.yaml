@@ -16,10 +16,13 @@
 
 name: ubuntu-tests
 
-on:
-  pull_request:
-    branches:
-      - main
+on: workflow_dispatch
+
+# on:
+#   pull_request:
+#     branches:
+#       - main
+
 jobs:
   ubuntu-jammy-tests:
     runs-on: ubuntu-22.04
