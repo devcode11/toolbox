@@ -15,20 +15,22 @@
 # limitations under the License.
 #
 
+# bats file_tags=commands-options
+
 load 'libs/bats-support/load'
 load 'libs/bats-assert/load'
 load 'libs/helpers'
 
 setup() {
-  bats_require_minimum_version 1.7.0
+  bats_require_minimum_version 1.8.0
   _setup_environment
-  cleanup_containers
+  cleanup_all
   pushd "$HOME" || return 1
 }
 
 teardown() {
   popd || return 1
-  cleanup_containers
+  cleanup_all
 }
 
 @test "run: Smoke test with true(1)" {
@@ -207,13 +209,7 @@ teardown() {
 
   assert_success
   assert_line --index 0 "uid=0(root) gid=0(root) groups=0(root)"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 1 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -355,7 +351,7 @@ teardown() {
   assert [ ${#stderr_lines[@]} -eq 3 ]
 }
 
-@test "run: Try a specific non-existent container with another present" {
+@test "run: Try a non-existent container with another present" {
   create_container other-container
 
   run --separate-stderr "$TOOLBX" run --container wrong-container true
@@ -846,11 +842,11 @@ teardown() {
 
   local container="ancient"
 
-  run "$PODMAN" create --name "$container" "$default_image" true
+  run podman create --name "$container" "$default_image" true
 
   assert_success
 
-  run $PODMAN ps --all
+  run podman ps --all
 
   assert_success
   assert_output --regexp "Created[[:blank:]]+$container"

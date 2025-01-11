@@ -15,12 +15,14 @@
 # limitations under the License.
 #
 
+# bats file_tags=commands-options
+
 load 'libs/bats-support/load'
 load 'libs/bats-assert/load'
 load 'libs/helpers'
 
 setup() {
-  bats_require_minimum_version 1.7.0
+  bats_require_minimum_version 1.10.0
   _setup_environment
   cleanup_all
 }
@@ -97,13 +99,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "$default_image"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -121,13 +117,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "$default_image"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -142,13 +132,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/arch-toolbox:latest"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -163,13 +147,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/arch-toolbox:latest"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -184,13 +162,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -205,13 +177,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -226,13 +192,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "registry.access.redhat.com/ubi8/toolbox:8.10"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -247,13 +207,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "registry.access.redhat.com/ubi8/toolbox:8.10"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -268,13 +222,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:16.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -289,13 +237,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:16.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -310,13 +252,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:18.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -331,13 +267,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:18.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -352,13 +282,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:20.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -373,13 +297,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "quay.io/toolbx/ubuntu-toolbox:20.04"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -394,13 +312,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "<none>"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -415,13 +327,7 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "<none>"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 2 ]
-  else
-    assert [ ${#lines[@]} -eq 3 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 2 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -440,13 +346,7 @@ teardown() {
   assert_success
   assert_line --index 1 --partial "$default_image"
   assert_line --index 2 --partial "$default_image-copy"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 3 ]
-  else
-    assert [ ${#lines[@]} -eq 4 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 3 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -465,13 +365,7 @@ teardown() {
   assert_success
   assert_line --index 1 --partial "$default_image"
   assert_line --index 2 --partial "$default_image-copy"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 3 ]
-  else
-    assert [ ${#lines[@]} -eq 4 ]
-  fi
-
+  assert [ ${#lines[@]} -eq 3 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -479,8 +373,11 @@ teardown() {
   local default_image
   default_image="$(get_default_image)"
 
+  local system_id
+  system_id="$(get_system_id)"
+
   local default_container
-  default_container="$(get_system_id)-toolbox-$(get_system_version)"
+  default_container="$system_id-toolbox-$(get_system_version)"
 
   # Pull the two images
   pull_default_image
@@ -499,55 +396,77 @@ teardown() {
   run --keep-empty-lines --separate-stderr "$TOOLBX" list --images
 
   assert_success
-  assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-  assert_line --index 2 --partial "$default_image"
 
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 3 ]
+  if [ "$system_id" = "fedora" ]; then
+    assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
+    assert_line --index 2 --partial "$default_image"
+  elif [ "$system_id" = "arch" ] || [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 1 --partial "$default_image"
+    assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
   else
-    assert [ ${#lines[@]} -eq 4 ]
+    fail "Define output for $system_id"
   fi
 
+  assert [ ${#lines[@]} -eq 3 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 
   # Check containers
   run --keep-empty-lines --separate-stderr "$TOOLBX" list --containers
 
   assert_success
-  assert_line --index 1 --partial "$default_container"
-  assert_line --index 2 --partial "non-default-one"
-  assert_line --index 3 --partial "non-default-two"
 
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 4 ]
+  if [ "$system_id" = "arch" ] || [ "$system_id" = "fedora" ]; then
+    assert_line --index 1 --partial "$default_container"
+    assert_line --index 2 --partial "non-default-one"
+    assert_line --index 3 --partial "non-default-two"
+  elif [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 1 --partial "non-default-one"
+    assert_line --index 2 --partial "non-default-two"
+    assert_line --index 3 --partial "$default_container"
   else
-    assert [ ${#lines[@]} -eq 5 ]
+    fail "Define output for $system_id"
   fi
 
+  assert [ ${#lines[@]} -eq 4 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 
   # Check all together
   run --keep-empty-lines --separate-stderr "$TOOLBX" list
 
   assert_success
-  assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-  assert_line --index 2 --partial "$default_image"
-  assert_line --index 5 --partial "$default_container"
-  assert_line --index 6 --partial "non-default-one"
-  assert_line --index 7 --partial "non-default-two"
 
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 8 ]
+  if [ "$system_id" = "fedora" ]; then
+    assert_line --index 1 --partial "registry.fedoraproject.org/fedora-toolbox:34"
+    assert_line --index 2 --partial "$default_image"
+  elif [ "$system_id" = "arch" ] || [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 1 --partial "$default_image"
+    assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
   else
-    assert [ ${#lines[@]} -eq 9 ]
+    fail "Define output for $system_id"
   fi
 
+  if [ "$system_id" = "arch" ] || [ "$system_id" = "fedora" ]; then
+    assert_line --index 5 --partial "$default_container"
+    assert_line --index 6 --partial "non-default-one"
+    assert_line --index 7 --partial "non-default-two"
+  elif [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 5 --partial "non-default-one"
+    assert_line --index 6 --partial "non-default-two"
+    assert_line --index 7 --partial "$default_container"
+  else
+    fail "Define output for $system_id"
+  fi
+
+  assert [ ${#lines[@]} -eq 8 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
 @test "list: Images with and without names" {
   local default_image
   default_image="$(get_default_image)"
+
+  local system_id
+  system_id="$(get_system_id)"
 
   pull_default_image
   pull_distro_image fedora 34
@@ -561,21 +480,27 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "<none>"
-  assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-  assert_line --index 3 --partial "$default_image"
 
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 4 ]
+  if [ "$system_id" = "fedora" ]; then
+    assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
+    assert_line --index 3 --partial "$default_image"
+  elif [ "$system_id" = "arch" ] || [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 2 --partial "$default_image"
+    assert_line --index 3 --partial "registry.fedoraproject.org/fedora-toolbox:34"
   else
-    assert [ ${#lines[@]} -eq 5 ]
+    fail "Define output for $system_id"
   fi
 
+  assert [ ${#lines[@]} -eq 4 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
 @test "list: Images with and without names (using --images)" {
   local default_image
   default_image="$(get_default_image)"
+
+  local system_id
+  system_id="$(get_system_id)"
 
   pull_default_image
   pull_distro_image fedora 34
@@ -585,15 +510,18 @@ teardown() {
 
   assert_success
   assert_line --index 1 --partial "<none>"
-  assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
-  assert_line --index 3 --partial "$default_image"
 
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 4 ]
+  if [ "$system_id" = "fedora" ]; then
+    assert_line --index 2 --partial "registry.fedoraproject.org/fedora-toolbox:34"
+    assert_line --index 3 --partial "$default_image"
+  elif [ "$system_id" = "arch" ] || [ "$system_id" = "ubuntu" ]; then
+    assert_line --index 2 --partial "$default_image"
+    assert_line --index 3 --partial "registry.fedoraproject.org/fedora-toolbox:34"
   else
-    assert [ ${#lines[@]} -eq 5 ]
+    fail "Define output for $system_id"
   fi
 
+  assert [ ${#lines[@]} -eq 4 ]
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
@@ -607,7 +535,7 @@ teardown() {
   num_of_images="$(list_images)"
   assert_equal "$num_of_images" 1
 
-  $PODMAN create --name busybox-container "$busybox_image"
+  podman create --name busybox-container "$busybox_image"
 
   local num_of_containers
   num_of_containers="$(list_containers)"
@@ -630,7 +558,7 @@ teardown() {
   num_of_images="$(list_images)"
   assert_equal "$num_of_images" 1
 
-  $PODMAN create --name busybox-container "$busybox_image"
+  podman create --name busybox-container "$busybox_image"
 
   local num_of_containers
   num_of_containers="$(list_containers)"
@@ -653,7 +581,7 @@ teardown() {
   num_of_images="$(list_images)"
   assert_equal "$num_of_images" 1
 
-  $PODMAN create --name busybox-container "$busybox_image"
+  podman create --name busybox-container "$busybox_image"
 
   local num_of_containers
   num_of_containers="$(list_containers)"

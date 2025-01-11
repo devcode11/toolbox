@@ -49,6 +49,7 @@ jobs:
             bash-completion \
             codespell \
             fish \
+            flatpak \
             gcc \
             go-md2man \
             golang-1.20 \
@@ -165,6 +166,7 @@ jobs:
             test/system/001-version.bats \
             test/system/002-help.bats \
             test/system/101-create.bats \
+            test/system/102-list.bats \
             test/system/103-container.bats \
             test/system/105-enter.bats \
             test/system/106-rm.bats \
@@ -172,7 +174,9 @@ jobs:
             test/system/108-completion.bats \
             test/system/201-ipc.bats \
             test/system/203-network.bats \
-            test/system/220-environment-variables.bats
+            test/system/220-environment-variables.bats \
+            test/system/501-create.bats \
+            test/system/505-enter.bats
         env:
           SHELL: /bin/bash
           TMPDIR: /var/tmp

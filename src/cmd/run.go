@@ -115,11 +115,8 @@ func run(cmd *cobra.Command, args []string) error {
 			return errors.New("this is not a Toolbx container")
 		}
 
-		if _, err := utils.ForwardToHost(); err != nil {
-			return err
-		}
-
-		return nil
+		exitCode, err := utils.ForwardToHost()
+		return &exitError{exitCode, err}
 	}
 
 	var defaultContainer bool = true
@@ -162,15 +159,6 @@ func run(cmd *cobra.Command, args []string) error {
 		false,
 		false,
 		true); err != nil {
-		// runCommand returns exitError for the executed commands to properly
-		// propagate return codes. Cobra prints all non-nil errors which in
-		// that case is not desirable. In that scenario silence the errors and
-		// leave the error handling to the root command.
-		var errExit *exitError
-		if errors.As(err, &errExit) {
-			cmd.SilenceErrors = true
-		}
-
 		return err
 	}
 
@@ -281,7 +269,14 @@ func runCommand(container string,
 
 	cdiSpecForNvidia, err := nvidia.GenerateCDISpec()
 	if err != nil {
-		if !errors.Is(err, nvidia.ErrPlatformUnsupported) {
+		if errors.Is(err, nvidia.ErrNVMLDriverLibraryVersionMismatch) {
+			var builder strings.Builder
+			fmt.Fprintf(&builder, "the proprietary NVIDIA driver's kernel and user space don't match\n")
+			fmt.Fprintf(&builder, "Check the host operating system and systemd journal.")
+
+			errMsg := builder.String()
+			return errors.New(errMsg)
+		} else if !errors.Is(err, nvidia.ErrPlatformUnsupported) {
 			return err
 		}
 	} else {
@@ -424,9 +419,18 @@ func runCommandWithFallbacks(container string,
 			}
 			return nil
 		case 125:
-			return &exitError{exitCode, fmt.Errorf("failed to invoke 'podman exec' in container %s", container)}
+			errMsg := fmt.Sprintf("failed to invoke 'podman exec' in container %s", container)
+			return &exitError{exitCode, errors.New(errMsg)}
 		case 126:
-			return &exitError{exitCode, fmt.Errorf("failed to invoke command %s in container %s", command[0], container)}
+			var err error
+			if command[0] != "toolbox" {
+				errMsg := fmt.Sprintf("failed to invoke command %s in container %s",
+					command[0],
+					container)
+				err = errors.New(errMsg)
+			}
+
+			return &exitError{exitCode, err}
 		case 127:
 			if pathPresent, _ := isPathPresent(container, workDir); !pathPresent {
 				if runFallbackWorkDirsIndex < len(runFallbackWorkDirs) {
@@ -443,7 +447,10 @@ func runCommandWithFallbacks(container string,
 					fmt.Fprintf(os.Stderr, "Using %s instead.\n", workDir)
 					runFallbackWorkDirsIndex++
 				} else {
-					return &exitError{exitCode, fmt.Errorf("directory %s not found in container %s", workDir, container)}
+					errMsg := fmt.Sprintf("directory %s not found in container %s",
+						workDir,
+						container)
+					return &exitError{exitCode, errors.New(errMsg)}
 				}
 			} else if _, err := isCommandPresent(container, command[0]); err != nil {
 				if fallbackToBash && runFallbackCommandsIndex < len(runFallbackCommands) {
@@ -457,8 +464,13 @@ func runCommandWithFallbacks(container string,
 
 					runFallbackCommandsIndex++
 				} else {
-					return &exitError{exitCode, fmt.Errorf("command %s not found in container %s", command[0], container)}
+					errMsg := fmt.Sprintf("command %s not found in container %s",
+						command[0],
+						container)
+					return &exitError{exitCode, errors.New(errMsg)}
 				}
+			} else if command[0] == "toolbox" {
+				return &exitError{exitCode, nil}
 			} else {
 				return nil
 			}

@@ -15,17 +15,20 @@
 # limitations under the License.
 #
 
+# bats file_tags=commands-options
+
 load 'libs/bats-support/load'
 load 'libs/bats-assert/load'
 load 'libs/helpers'
 
 setup() {
+  bats_require_minimum_version 1.8.0
   _setup_environment
-  cleanup_containers
+  cleanup_all
 }
 
 teardown() {
-  cleanup_containers
+  cleanup_all
 }
 
 
@@ -47,15 +50,15 @@ teardown() {
 }
 
 @test "container(Fedora Rawhide): Containers with supported versions start without issues" {
+  if ! is_fedora_rawhide; then
+    skip "This test is only for Fedora Rawhide"
+  fi
+
   local system_id
   system_id="$(get_system_id)"
 
   local system_version
   system_version="$(get_system_version)"
-
-  if ! is_fedora_rawhide; then
-    skip "This test is only for Fedora Rawhide"
-  fi
 
   create_distro_container "$system_id" "$system_version" latest
   run container_started latest

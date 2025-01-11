@@ -1,5 +1,5 @@
 [Toolbx](https://containertoolbx.org/) is a tool for Linux, which allows the
-use of interactive command line environments for development and
+use of interactive command line environments for software development and
 troubleshooting the host operating system, without having to install software
 on the host. It is built on top of [Podman](https://podman.io/) and other
 standard container technologies from [OCI](https://opencontainers.org/).
@@ -11,8 +11,8 @@ udev database, etc..
 
 This is particularly useful on
 [OSTree](https://ostreedev.github.io/ostree/) based operating systems like
-[Fedora CoreOS](https://coreos.fedoraproject.org/) and
-[Silverblue](https://silverblue.fedoraproject.org/). The intention of these
+[Fedora CoreOS](https://fedoraproject.org/coreos/) and
+[Silverblue](https://fedoraproject.org/silverblue/). The intention of these
 systems is to discourage installation of software on the host, and instead
 install software as (or in) containers — they mostly don't even have package
 managers like DNF or YUM. This makes it difficult to set up a development

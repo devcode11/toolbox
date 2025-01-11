@@ -125,11 +125,8 @@ func create(cmd *cobra.Command, args []string) error {
 			return errors.New("this is not a Toolbx container")
 		}
 
-		if _, err := utils.ForwardToHost(); err != nil {
-			return err
-		}
-
-		return nil
+		exitCode, err := utils.ForwardToHost()
+		return &exitError{exitCode, err}
 	}
 
 	if cmd.Flag("distro").Changed && cmd.Flag("image").Changed {
@@ -487,10 +484,9 @@ func createContainer(container, image, release, authFile string, showCommandToEn
 		logrus.Debugf("%s", arg)
 	}
 
-	s := spinner.New(spinner.CharSets[9], 500*time.Millisecond)
-	if logLevel := logrus.GetLevel(); logLevel < logrus.DebugLevel && term.IsTerminal(os.Stdout) {
+	s := spinner.New(spinner.CharSets[9], 500*time.Millisecond, spinner.WithWriterFile(os.Stdout))
+	if logLevel := logrus.GetLevel(); logLevel < logrus.DebugLevel {
 		s.Prefix = fmt.Sprintf("Creating container %s: ", container)
-		s.Writer = os.Stdout
 		s.Start()
 		defer s.Stop()
 	}
@@ -737,10 +733,9 @@ func pullImage(image, release, authFile string) (bool, error) {
 
 	logrus.Debugf("Pulling image %s", imageFull)
 
-	if logLevel := logrus.GetLevel(); logLevel < logrus.DebugLevel && term.IsTerminal(os.Stdout) {
-		s := spinner.New(spinner.CharSets[9], 500*time.Millisecond)
+	if logLevel := logrus.GetLevel(); logLevel < logrus.DebugLevel {
+		s := spinner.New(spinner.CharSets[9], 500*time.Millisecond, spinner.WithWriterFile(os.Stdout))
 		s.Prefix = fmt.Sprintf("Pulling %s: ", imageFull)
-		s.Writer = os.Stdout
 		s.Start()
 		defer s.Stop()
 	}

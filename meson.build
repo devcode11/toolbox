@@ -1,7 +1,7 @@
 project(
   'toolbox',
   'c',
-  version: '0.0.99.5',
+  version: '0.1.1',
   license: 'ASL 2.0',
   default_options: 'c_std=c99',
   meson_version: '>= 0.58.0',
@@ -88,6 +88,7 @@ install_subdir(
   'test',
   install_dir: get_option('datadir') / meson.project_name(),
   exclude_files: [
+    'meson.build',
     'system/libs/bats-assert/.git',
     'system/libs/bats-assert/.gitignore',
     'system/libs/bats-assert/.travis.yml',
@@ -95,13 +96,12 @@ install_subdir(
     'system/libs/bats-support/.git',
     'system/libs/bats-support/.gitignore',
     'system/libs/bats-support/.travis.yml',
-    'system/libs/bats-support/package.json'
+    'system/libs/bats-support/package.json',
+    'system/meson.build',
     ],
   exclude_directories: [
-    'system/libs/bats-assert/.git',
     'system/libs/bats-assert/script',
     'system/libs/bats-assert/test',
-    'system/libs/bats-support/.git',
     'system/libs/bats-support/script',
     'system/libs/bats-support/test'
   ]

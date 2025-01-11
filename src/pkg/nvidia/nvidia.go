@@ -21,6 +21,7 @@ import (
 	"io"
 
 	"github.com/NVIDIA/go-nvlib/pkg/nvlib/info"
+	"github.com/NVIDIA/go-nvml/pkg/nvml"
 	"github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi"
 	nvspec "github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi/spec"
 	"github.com/sirupsen/logrus"
@@ -32,7 +33,8 @@ var (
 )
 
 var (
-	ErrPlatformUnsupported = errors.New("platform is unsupported")
+	ErrNVMLDriverLibraryVersionMismatch = errors.New("NVML driver/library version mismatch")
+	ErrPlatformUnsupported              = errors.New("platform is unsupported")
 )
 
 func createNullLogger() *logrus.Logger {
@@ -45,7 +47,15 @@ func createNullLogger() *logrus.Logger {
 func GenerateCDISpec() (*specs.Spec, error) {
 	logrus.Debugf("Generating Container Device Interface for NVIDIA")
 
-	info := info.New()
+	var logger *logrus.Logger
+	if logLevel < logrus.DebugLevel {
+		logger = createNullLogger()
+	} else {
+		logger = logrus.StandardLogger()
+	}
+
+	nvmLib := nvml.New()
+	info := info.New(info.WithLogger(logger), info.WithNvmlLib(nvmLib))
 
 	if ok, reason := info.HasDXCore(); ok {
 		logrus.Debugf("Generating Container Device Interface for NVIDIA: Windows is unsupported: %s", reason)
@@ -53,8 +63,30 @@ func GenerateCDISpec() (*specs.Spec, error) {
 	}
 
 	hasNvml, reason := info.HasNvml()
-	if !hasNvml {
-		logrus.Debugf("Generating Container Device Interface for NVIDIA: NVML not found: %s", reason)
+	if hasNvml {
+		if err := nvmLib.Init(); err != nvml.SUCCESS {
+			logrus.Debugf("Generating Container Device Interface for NVIDIA: failed to initialize NVML: %s",
+				err)
+
+			if err == nvml.ERROR_DRIVER_NOT_LOADED {
+				logrus.Debug("Generating Container Device Interface for NVIDIA: skipping")
+				return nil, ErrPlatformUnsupported
+			} else if err == nvml.ERROR_LIB_RM_VERSION_MISMATCH {
+				return nil, ErrNVMLDriverLibraryVersionMismatch
+			} else {
+				return nil, errors.New("failed to initialize NVIDIA Management Library")
+			}
+		}
+
+		defer func() {
+			if err := nvmLib.Shutdown(); err != nvml.SUCCESS {
+				logrus.Debugf("Generating Container Device Interface for NVIDIA: failed to shutdown NVML: %s",
+					err)
+			}
+		}()
+	} else {
+		logrus.Debugf("Generating Container Device Interface for NVIDIA: Management Library not found: %s",
+			reason)
 	}
 
 	isTegra, reason := info.IsTegraSystem()
@@ -67,14 +99,7 @@ func GenerateCDISpec() (*specs.Spec, error) {
 		return nil, ErrPlatformUnsupported
 	}
 
-	var logger *logrus.Logger
-	if logLevel < logrus.DebugLevel {
-		logger = createNullLogger()
-	} else {
-		logger = logrus.StandardLogger()
-	}
-
-	cdi, err := nvcdi.New(nvcdi.WithLogger(logger))
+	cdi, err := nvcdi.New(nvcdi.WithInfoLib(info), nvcdi.WithLogger(logger), nvcdi.WithNvmlLib(nvmLib))
 	if err != nil {
 		logrus.Debugf("Generating Container Device Interface for NVIDIA: failed to create library: %s", err)
 		return nil, errors.New("failed to create Container Device Interface library for NVIDIA")

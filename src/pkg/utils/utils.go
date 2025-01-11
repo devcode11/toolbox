@@ -64,7 +64,7 @@ const (
 	containerNamePrefixFallback = "fedora-toolbox"
 	distroFallback              = "fedora"
 	idTruncLength               = 12
-	releaseFallback             = "38"
+	releaseFallback             = "40"
 )
 
 const (
@@ -80,6 +80,7 @@ var (
 
 	preservedEnvironmentVariables = []string{
 		"COLORTERM",
+		"CONTAINERS_STORAGE_CONF",
 		"DBUS_SESSION_BUS_ADDRESS",
 		"DBUS_SYSTEM_BUS_ADDRESS",
 		"DESKTOP_SESSION",
@@ -247,7 +248,7 @@ func ForwardToHost() (int, error) {
 		logrus.Debugf("%s", arg)
 	}
 
-	exitCode, err := shell.RunWithExitCode("flatpak-spawn", os.Stdin, os.Stdout, nil, flatpakSpawnArgs...)
+	exitCode, err := shell.RunWithExitCode("flatpak-spawn", os.Stdin, os.Stdout, os.Stderr, flatpakSpawnArgs...)
 	if err != nil {
 		return exitCode, err
 	}

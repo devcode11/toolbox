@@ -474,35 +474,93 @@ func applyCDISpecForNvidia(spec *specs.Spec) error {
 			continue
 		}
 
-		if len(hook.Args) < 3 ||
-			hook.Args[0] != "nvidia-ctk" ||
-			hook.Args[1] != "hook" ||
-			hook.Args[2] != "update-ldcache" {
-			logrus.Debugf("Applying Container Device Interface for NVIDIA: unknown hook arguments")
+		if len(hook.Args) >= 2 &&
+			hook.Args[0] == "nvidia-cdi-hook" &&
+			hook.Args[1] == "create-symlinks" {
+			hookArgs := hook.Args[2:]
+			if err := applyCDISpecForNvidiaHookCreateSymlinks(hookArgs); err != nil {
+				logrus.Debugf("Applying Container Device Interface for NVIDIA: %s", err)
+				return errors.New("failed to create symlinks for Container Device Interface for NVIDIA")
+			}
+
+			continue
+		} else if len(hook.Args) >= 2 &&
+			hook.Args[0] == "nvidia-cdi-hook" &&
+			hook.Args[1] == "update-ldcache" {
+			hookArgs := hook.Args[2:]
+			if err := applyCDISpecForNvidiaHookUpdateLDCache(hookArgs); err != nil {
+				logrus.Debugf("Applying Container Device Interface for NVIDIA: %s", err)
+				return errors.New("failed to update ldcache for Container Device Interface for NVIDIA")
+			}
+
 			continue
 		}
 
-		var folderFlag bool
-		var folders []string
-		hookArgs := hook.Args[3:]
+		logrus.Debug("Applying Container Device Interface for NVIDIA: unknown hook arguments:")
+		for _, arg := range hook.Args {
+			logrus.Debugf("%s", arg)
+		}
+	}
 
-		for _, hookArg := range hookArgs {
-			if hookArg == "--folder" {
-				folderFlag = true
-				continue
-			}
+	return nil
+}
 
-			if folderFlag {
-				folders = append(folders, hookArg)
-			}
+func applyCDISpecForNvidiaHookCreateSymlinks(hookArgs []string) error {
+	var linkFlag bool
 
-			folderFlag = false
+	for _, hookArg := range hookArgs {
+		if hookArg == "--link" {
+			linkFlag = true
+			continue
 		}
 
-		if err := ldConfig("toolbx-nvidia.conf", folders); err != nil {
-			logrus.Debugf("Applying Container Device Interface for NVIDIA: %s", err)
-			return errors.New("failed to update ldcache for Container Device Interface for NVIDIA")
+		if linkFlag {
+			linkFlag = false
+			if linkParts := strings.Split(hookArg, "::"); len(linkParts) == 2 {
+				existingTarget := linkParts[0]
+
+				newLink := linkParts[1]
+				if !filepath.IsAbs(newLink) {
+					return fmt.Errorf("invalid --link argument: link %s is not an absolute path",
+						newLink)
+				}
+
+				if err := createSymbolicLink(existingTarget, newLink); err != nil {
+					return err
+				}
+			} else {
+				return fmt.Errorf("invalid --link argument: %s not in '<target>::<link>' format",
+					hookArg)
+			}
 		}
+	}
+
+	if linkFlag {
+		return errors.New("missing --link argument")
+	}
+
+	return nil
+}
+
+func applyCDISpecForNvidiaHookUpdateLDCache(hookArgs []string) error {
+	var folderFlag bool
+	var folders []string
+
+	for _, hookArg := range hookArgs {
+		if hookArg == "--folder" {
+			folderFlag = true
+			continue
+		}
+
+		if folderFlag {
+			folders = append(folders, hookArg)
+		}
+
+		folderFlag = false
+	}
+
+	if err := ldConfig("toolbx-nvidia.conf", folders); err != nil {
+		return err
 	}
 
 	return nil
@@ -571,6 +629,29 @@ func configureUsers(targetUserUid int, targetUser, targetUserHome, targetUserShe
 		errString := stderr.String()
 		logrus.Debugf("Removing password for user root: failed: %s", errString)
 		return fmt.Errorf("failed to remove password for root: %w", err)
+	}
+
+	return nil
+}
+
+func createSymbolicLink(existingTarget, newLink string) error {
+	logrus.Debugf("Creating symbolic link with target %s and link %s", existingTarget, newLink)
+
+	newLinkDir := filepath.Dir(newLink)
+	if err := os.MkdirAll(newLinkDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", newLinkDir, err)
+	}
+
+	if err := os.Symlink(existingTarget, newLink); err != nil {
+		var errLink *os.LinkError
+		if errors.As(err, &errLink) {
+			if errors.Is(err, os.ErrExist) {
+				logrus.Debugf("Creating symbolic link: file %s already exists", newLink)
+				return nil
+			}
+		}
+
+		return fmt.Errorf("failed to create symbolic link: %w", err)
 	}
 
 	return nil
@@ -705,7 +786,7 @@ func mountBind(containerPath, source, flags string) error {
 		if err := os.MkdirAll(containerPath, 0755); err != nil {
 			return fmt.Errorf("failed to create directory %s: %w", containerPath, err)
 		}
-	} else if fileMode.IsRegular() {
+	} else if fileMode.IsRegular() || fileMode&os.ModeSocket != 0 {
 		logrus.Debugf("Creating regular file %s", containerPath)
 
 		containerPathDir := filepath.Dir(containerPath)

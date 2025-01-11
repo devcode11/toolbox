@@ -15,22 +15,25 @@
 # limitations under the License.
 #
 
+# bats file_tags=runtime-environment
+
 load 'libs/bats-support/load'
 load 'libs/bats-assert/load'
 load 'libs/helpers'
 
 setup() {
-  bats_require_minimum_version 1.7.0
+  bats_require_minimum_version 1.10.0
   _setup_environment
-  cleanup_containers
+  cleanup_all
   pushd "$HOME" || return 1
 }
 
 teardown() {
   popd || return 1
-  cleanup_containers
+  cleanup_all
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: session bus inside the default container" {
   local expected_response
   expected_response="$(gdbus call \
@@ -49,17 +52,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: session bus inside Arch Linux" {
   local expected_response
   expected_response="$(gdbus call \
@@ -80,17 +79,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: session bus inside Fedora 34" {
   local expected_response
   expected_response="$(gdbus call \
@@ -112,17 +107,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: session bus inside RHEL 8.10" {
   local expected_response
   expected_response="$(gdbus call \
@@ -144,17 +135,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: session bus inside Ubuntu 16.04" {
   busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.Peer Ping
 
@@ -174,6 +161,7 @@ teardown() {
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: session bus inside Ubuntu 18.04" {
   busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.Peer Ping
 
@@ -193,6 +181,7 @@ teardown() {
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: session bus inside Ubuntu 20.04" {
   busctl --user call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.Peer Ping
 
@@ -212,6 +201,7 @@ teardown() {
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: system bus inside the default container" {
   local expected_response
   expected_response="$(gdbus call \
@@ -234,17 +224,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: system bus inside Arch Linux" {
   local expected_response
   expected_response="$(gdbus call \
@@ -269,17 +255,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: system bus inside Fedora 34" {
   local expected_response
   expected_response="$(gdbus call \
@@ -305,17 +287,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=arch-fedora
 @test "dbus: system bus inside RHEL 8.10" {
   local expected_response
   expected_response="$(gdbus call \
@@ -341,17 +319,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: system bus inside Ubuntu 16.04" {
   local expected_response
   expected_response="$(busctl --system get-property \
@@ -373,17 +347,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: system bus inside Ubuntu 18.04" {
   local expected_response
   expected_response="$(busctl --system get-property \
@@ -405,17 +375,13 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]
 }
 
+# bats test_tags=ubuntu
 @test "dbus: system bus inside Ubuntu 20.04" {
   local expected_response
   expected_response="$(busctl --system get-property \
@@ -437,12 +403,7 @@ teardown() {
 
   assert_success
   assert_line --index 0 "$expected_response"
-
-  if check_bats_version 1.10.0; then
-    assert [ ${#lines[@]} -eq 1 ]
-  else
-    assert [ ${#lines[@]} -eq 2 ]
-  fi
+  assert [ ${#lines[@]} -eq 1 ]
 
   # shellcheck disable=SC2154
   assert [ ${#stderr_lines[@]} -eq 0 ]

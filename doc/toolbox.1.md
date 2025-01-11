@@ -1,7 +1,7 @@
 % toolbox 1
 
 ## NAME
-toolbox - Tool for containerized command line environments on Linux
+toolbox - Tool for interactive command line environments on Linux
 
 ## SYNOPSIS
 **toolbox** [*--assumeyes* | *-y*]
@@ -13,21 +13,27 @@ toolbox - Tool for containerized command line environments on Linux
 
 ## DESCRIPTION
 
-Toolbx is a tool for Linux operating systems, which allows the use of
-containerized command line environments. It is built on top of Podman and
-other standard container technologies from OCI.
+Toolbx is a tool for Linux, which allows the use of interactive command line
+environments for software development and troubleshooting the host operating
+system, without having to install software on the host. It is built on top of
+Podman and other standard container technologies from OCI.
+
+Toolbx environments have seamless access to the user’s home directory, the
+Wayland and X11 sockets, networking (including Avahi), removable devices (like
+USB sticks), systemd journal, SSH agent, D-Bus, ulimits, /dev and the udev
+database, etc..
 
 This is particularly useful on OSTree based operating systems like Fedora
 CoreOS and Silverblue. The intention of these systems is to discourage
 installation of software on the host, and instead install software as (or in)
 containers — they mostly don't even have package managers like DNF or YUM.
-This makes it difficult to set up a development environment or install tools
-for debugging in the usual way.
+This makes it difficult to set up a development environment or troubleshoot
+the operating system in the usual way.
 
 Toolbx solves this problem by providing a fully mutable container within
-which one can install their favourite development and debugging tools, editors
-and SDKs. For example, it's possible to do `yum install ansible` without
-affecting the base operating system.
+which one can install their favourite development and troubleshooting tools,
+editors and SDKs. For example, it's possible to do `yum install ansible`
+without affecting the base operating system.
 
 However, this tool doesn't *require* using an OSTree based system. It works
 equally well on Fedora Workstation and Server, and that's a useful way to
@@ -35,10 +41,11 @@ incrementally adopt containerization.
 
 The Toolbx environment is based on an OCI image. On Fedora this is the
 `fedora-toolbox` image. This image is used to create a Toolbx container that
-seamlessly integrates with the rest of the operating system by providing
-access to the user's home directory, the Wayland and X11 sockets, networking
-(including Avahi), removable devices (like USB sticks), systemd journal, SSH
-agent, D-Bus, ulimits, /dev and the udev database, etc..
+offers the interactive command line environment.
+
+Note that Toolbx makes no promise about security beyond what’s already
+available in the usual command line environment on the host that everybody is
+familiar with.
 
 ## Supported operating system distributions
 
