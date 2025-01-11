@@ -16,12 +16,19 @@
 
 name: ubuntu-tests
 
-on: workflow_dispatch
-
-# on:
-#   pull_request:
-#     branches:
-#       - main
+on:
+  workflow_dispatch:
+    inputs:
+      publishTestApp:
+        description: 'Publish test application'
+        type: boolean
+        default: false
+        required: true
+      runTests:
+        description: 'Run tests'
+        type: boolean
+        default: true
+        required: true
 
 jobs:
   ubuntu-jammy-tests:
@@ -139,11 +146,20 @@ jobs:
         run: sudo meson install -C builddir
         working-directory: containers/toolbox
 
+      - name: Publish app
+        if: ${{ inputs.publishTestApp }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: testing-toolbox
+          path: /usr/local/bin/toolbox
+
       - name: Unit tests
+        if: ${{ inputs.runTests }}
         run: meson test -C builddir --verbose
         working-directory: containers/toolbox
 
       - name: System tests
+        if: ${{ inputs.runTests }}
         run: |
           bats --timing \
             test/system/001-version.bats \
