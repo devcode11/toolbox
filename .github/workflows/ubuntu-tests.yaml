@@ -52,7 +52,7 @@ jobs:
             flatpak \
             gcc \
             go-md2man \
-            golang-1.20 \
+            golang-1.21 \
             meson \
             ninja-build \
             openssl \
@@ -62,9 +62,9 @@ jobs:
             systemd \
             udisks2
 
-      - name: Set up PATH for Go 1.20
+      - name: Set up PATH for Go 1.21
         run: |
-          echo "PATH=/usr/lib/go-1.20/bin:$PATH" >> "$GITHUB_ENV"
+          echo "PATH=/usr/lib/go-1.21/bin:$PATH" >> "$GITHUB_ENV"
 
       - name: Checkout Bats
         uses: actions/checkout@v4
@@ -133,6 +133,8 @@ jobs:
 
       - name: Download Go modules
         run: go mod download -x
+        env:
+          GOINSECURE: go.opencensus.io
         working-directory: containers/toolbox/src
 
       - name: Set up build directory
